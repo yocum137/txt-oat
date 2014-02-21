@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # This script will create the Launch Control Policy (lcp) and tboot policy
-# for a Measured Launch Environment (mle).
+# for a Measured Launch Environment (mle) and write the policy to the NVRAM on
+# the Trusted Platform Module (tpm) on the mobo.
 
 
 if [ $UID -ne 0 ]; then
@@ -10,12 +11,22 @@ if [ $UID -ne 0 ]; then
 fi
 
 # TPM password - MUST BE 20 CHARACTERS!
-PASSWORD="Eigentuemer Passwort"
+PASSWORD="20 character passwrd"
 
 # Clean up the files after we're done?
 CLEAN_UP=false
 
 cd /root
+
+# Clean up the files before we start!  vl.pol is simply appended to, not 
+# written over - might as well clean up everything else, too.
+rm -f mle_hash mle.elt pcrs pconf.elt list_unsig.lst privkey.pem pubkey.pem list_sig.lst list.pol list.data vl.pol
+
+if [ ! -e /boot/tboot.gz ]; then 
+    echo "/boot/tboot.gz does not exist - did you install tboot?"
+    echo "(yum -y install tboot)"
+    exit 1
+fi
 
 # a. Create hash for tboot.gz and store it in the mle_hash file:
 lcp_mlehash -c "logging=vga,serial,memory" /boot/tboot.gz > mle_hash
@@ -49,7 +60,12 @@ m=`grep default /boot/grub/grub.conf  | awk -F= '{print $2}'`
 let n=m+1
 
 # set the boot CMD_LINE
-CMD_LINE="`grep vmlinuz-[23] /boot/grub/grub.conf | head -n${n} | tail -n1 | awk '{for (i=1; i<=NF; i++) $i = $(i+2); NF; print}'`"
+# tboot and grub v1 don't play well together (e.g., an extra space between 
+# cli options can cause tboot to fail), we need to use sed instead of awk.
+# Apparently this is not an issue with grub2
+#CMD_LINE="`grep vmlinuz-[23] /boot/grub/grub.conf | head -n${n} | tail -n1 | awk '{for (i=1; i<=NF; i++) $i = $(i+2); NF; print}'`"
+
+CMD_LINE="`grep vmlinuz-[23] /boot/grub/grub.conf | head -n${n} | tail -n1 | sed -e 's/^[ \t]*//' | cut -d\  -f3-`"
 
 # set the kernel image
 KERNEL_IMG="`grep vmlinuz-[23] /boot/grub/grub.conf | head -n${n} | tail -n1 | awk '{print $2}'`"
