@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script will create the Launch Control Policy (lcp) and tboot policy
+# This script will update the tboot policy
 # for a Measured Launch Environment (mle) and write the policy to the NVRAM on
 # the Trusted Platform Module (tpm) on the mobo.
 
@@ -10,8 +10,19 @@ if [ $UID -ne 0 ]; then
     exit 1
 fi
 
+if [ $# -ne 1 ]; then 
+    echo "Usage: $0 <20_character_passwrd>"
+    exit 1
+fi
+
 # TPM password - MUST BE 20 CHARACTERS!
-PASSWORD="Eigentuemer Passwort"
+#PASSWORD="20 character passwrd"
+PASSWORD="$1"
+
+if [ `echo $PASSWORD | wc -c` -ne 20 ]; then
+    echo "Password is not 20 characters long.  Please try again."
+    exit 1
+fi
 
 # Clean up the files after we're done?
 CLEAN_UP=false
