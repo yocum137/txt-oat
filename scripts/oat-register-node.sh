@@ -1,5 +1,8 @@
 #!/bin/bash
 # This script will whitelist this node with an Open Attestation Service
+#
+# TODO: should do some basic input validation so no errors are produced 
+# when entering hardware information into the DB on the OAT Server.
 
 if [ $UID -ne 0 ]; then
     echo "This can only be executed as root.  Aborting."
