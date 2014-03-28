@@ -3,6 +3,9 @@
 # This script will create the Launch Control Policy (lcp) and tboot policy
 # for a Measured Launch Environment (mle) and write the policy to the NVRAM on
 # the Trusted Platform Module (tpm) on the mobo.
+#
+# For complete details, and a cure for insomnia, read the complete documents
+# policy_v2.txt and lcptools2.txt found in /usr/share/doc/tboot-1.7.0/.
 
 
 if [ $UID -ne 0 ]; then
