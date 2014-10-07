@@ -19,7 +19,7 @@ fi
 #PASSWORD="20 character passwrd"
 PASSWORD="$1"
 
-if [ `echo $PASSWORD | wc -c` -ne 20 ]; then
+if [ `echo -n $PASSWORD | wc -c` -ne 20 ]; then
     echo "Password is not 20 characters long.  Please try again."
     exit 1
 fi
