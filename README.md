@@ -1,6 +1,7 @@
 txt-oat
 =======
 
+
 A Red Hat &amp; Intel Joint Project: scripts to ease TXT/OAT deployment for OpenStack.
 txt-oat git repo is for a Joint Red Hat and Intel project to showcase OpenStack
 and TXT (Trusted eXecution Technology).
